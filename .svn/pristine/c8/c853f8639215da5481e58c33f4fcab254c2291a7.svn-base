@@ -1,0 +1,97 @@
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@taglib prefix="c"  uri="http://java.sun.com/jsp/jstl/core" %>
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <link href="${pageContext.request.contextPath}/css/styles.css"  rel="stylesheet" type="text/css"/>
+        
+         <link rel="stylesheet" href="css/css/validationEngine.jquery.css" type="text/css" media="screen" title="no title" charset="utf-8" />
+        <link rel="stylesheet" href="css/css/template.css" type="text/css" media="screen" title="no title" charset="utf-8" />
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.min.js" type="text/javascript"></script>
+        <script src="js/js/jquery.validationEngine-en.js" type="text/javascript"></script>
+        <script src="js/js/jquery.validationEngine.js" type="text/javascript"></script>
+
+        <script>
+            $(document).ready(function () {
+                // SUCCESS AJAX CALL, replace "success: false," by:     success : function() { callSuccessFunction() }, 
+
+                $("#formID").validationEngine()
+
+
+                //$.validationEngine.loadValidation("#date")
+                //alert($("#formID").validationEngine({returnIsValid:true}))
+                //$.validationEngine.buildPrompt("#date","This is an example","error")	 		 // Exterior prompt build example								 // input prompt close example
+                //$.validationEngine.closePrompt(".formError",true) 							// CLOSE ALL OPEN PROMPTS
+            });
+
+            // JUST AN EXAMPLE OF VALIDATIN CUSTOM FUNCTIONS : funcCall[validate2fields]
+            function validate2fields() {
+                if ($("#firstname").val() == "" || $("#lastname").val() == "") {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        </script>
+        <title>Edit product</title>
+    </head>
+    <body>
+
+        <jsp:include page="../commons/userheader.jsp" />
+        <div class="wrapper">
+            <jsp:include page="../commons/usersidebar.jsp" />
+            <div class="content">
+                  <div class="categoriesTitle"> Update advert</div>
+                <div class="success">${anuntupdatat}</div>
+                  <form id="formID" action="<%=response.encodeURL(request.getContextPath()) + "/addproduct"%>" method="post" >
+                       <input type="hidden" name="id" value="${produs.id}">   
+                       
+                       
+                    <div class="region">
+                        <p>region</p>
+                        <input  type="text" name="regiunea"  value="${produs.regiunea}" id="user" class="validate[required,custom[noSpecialCaracters],custom[onlyLetter],length[0,45]]"/>
+                    </div>
+                   
+
+                    <div class="price">
+                        <p>price</p>
+                        <input  type="text" name="pret"  id="age"  value="${produs.pret}" class="validate[required,custom[onlyNumber],length[1,7]] text-input" />
+                    </div>
+                      <div class="clear"></div>
+                    <div class="phone1">
+                        <p>phone</p>
+                        <input  type="text"  name="telefon" id="telephone" value="${produs.telefon}" class="validate[required,custom[telephone]] text-input"  />
+                    </div>
+
+                    <div class="title">
+                        <p>title</p>
+                        <input  maxlength="80" type="text" name="denumire" id="comments" value="${produs.denumire}" class="validate[required,length[0,80]] text-input"/>
+                    </div>
+
+                    <div class="details">
+                        <p>details</p>
+                        <textarea  name="descriere" id="comments" rows="20" cols="60" class="validate[required,length[0,2000]] text-input"  >${produs.descriere}</textarea>
+                    </div>
+                    
+                    <div class="photos">
+                        <p>photos</p>
+                        <div class="uploadphoto"></div>
+                    </div>   
+                    <p><input class="loginButton" type="submit"  value="Add !"/></p>
+
+                </form>
+
+
+
+
+            </div>
+            <div class="clear"></div>
+            <jsp:include page="../commons/footer.jsp" />
+        </div>
+
+
+    </body>
+</html>
+

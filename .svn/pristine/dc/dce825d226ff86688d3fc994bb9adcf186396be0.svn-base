@@ -1,0 +1,323 @@
+package com.iucosoft.weddingstrore.dao.impl;
+
+import com.iucosoft.weddingstore.dao.ProduseDaoIntf;
+import com.iucosoft.weddingstore.db.MyDataSource;
+import com.iucosoft.weddingstore.domain.Produse;
+import com.iucosoft.weddingstore.domain.UserBean;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+public class ProduseDaoImpl implements ProduseDaoIntf {
+
+    private static final Logger LOG = Logger.getLogger(ProduseDaoImpl.class.getName());
+
+    private static ProduseDaoImpl instance;
+    private MyDataSource myDataSource;
+
+    public static ProduseDaoImpl getInstance(MyDataSource myDataSource) {
+        if (instance == null) {
+            instance = new ProduseDaoImpl(myDataSource);
+        }
+
+        return instance;
+    }
+
+    private ProduseDaoImpl(MyDataSource myDataSource) {
+        this.myDataSource = myDataSource;
+    }
+
+    public ProduseDaoImpl() {
+    }
+
+    @Override
+    public void saveProdus(Produse produs, UserBean userBean) {
+        String sql = "INSERT into produse VALUES(null,?,?,?,?,?,?,?)";
+        try (
+                Connection conn = myDataSource.getConnection();
+                PreparedStatement ps = conn.prepareStatement(sql);) {
+            ps.setString(1, produs.getDenumire());
+            ps.setString(2, produs.getDescriere());
+            ps.setDouble(3, produs.getPret());
+            ps.setInt(4, produs.getTelefon());
+            ps.setString(5, produs.getRegiunea());
+            ps.setInt(6, produs.getIdCategorie());
+
+            ps.setInt(7, userBean.getId());
+            ps.executeUpdate();
+
+        } catch (SQLException ex) {
+            Logger.getLogger(ProduseDaoImpl.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+    }
+
+    @Override
+    public void updateProdus(Produse produs) {
+        String sql = "UPDATE produse SET denumire=? , descriere=? , pret=?,regiunea=?,telefon=? WHERE id=?";
+        try (
+                Connection conn = myDataSource.getConnection();
+                PreparedStatement ps = conn.prepareStatement(sql);) {
+            ps.setString(1, produs.getDenumire());
+            ps.setString(2, produs.getDescriere());
+            ps.setDouble(3, produs.getPret());
+            ps.setString(4, produs.getRegiunea());
+            ps.setInt(5, produs.getTelefon());
+
+            ps.setInt(6, produs.getId());
+
+            ps.executeUpdate();
+
+        } catch (SQLException ex) {
+            Logger.getLogger(ProduseDaoImpl.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    @Override
+    public void deleteProdus(Produse produs) throws SQLException {
+
+        String sql = "DELETE FROM produse WHERE id=" + produs.getId();
+        try (
+                Connection conn = myDataSource.getConnection();
+                Statement stat = conn.createStatement();) {
+
+            stat.executeUpdate(sql);
+
+        } catch (Exception e) {
+            LOG.severe("delete produs: " + e);
+            throw new SQLException("nu pot sterge ");
+        }
+
+    }
+
+    @Override
+    public Produse findOneProdusById(int id) {
+        Produse p = null;
+        String sql = "SELECT * FROM produse WHERE id=?";
+
+        try {
+            try (
+                    Connection conn = myDataSource.getConnection();
+                    PreparedStatement ps = conn.prepareStatement(sql);) {
+                ps.setInt(1, id);
+                try (ResultSet rs = ps.executeQuery();) {
+                    if (rs.next()) {
+                        p = new Produse(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getInt(4), rs.getInt(5), rs.getString(6));
+
+                    }
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(ProduseDaoImpl.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return p;
+
+    }
+    private int noOfRecords;
+
+    @Override
+    public List<Produse> findAllByCategorieId(int id, int offset, int noOfRecords) {
+        Connection connection = null;
+        Statement stmt = null;
+
+        String query = "select SQL_CALC_FOUND_ROWS * from produse WHERE idCat=" + id + " ORDER BY id DESC limit " + offset + ", " + noOfRecords;
+
+        System.out.println(
+                "EmployeeDAO.viewAllEmployees()" + query);
+        List<Produse> lista = new ArrayList<Produse>();
+        Produse produs = null;
+
+        try {
+            connection = myDataSource.getConnection();
+            stmt = connection.createStatement();
+            ResultSet rs = stmt.executeQuery(query);
+            while (rs.next()) {
+
+                produs = new Produse(rs.getInt(1), rs.getString(2), rs.getInt(4));
+                lista.add(produs);
+            }
+            rs.close();
+            rs = stmt.executeQuery("SELECT FOUND_ROWS()");
+            if (rs.next()) {
+                this.noOfRecords = rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (stmt != null) {
+                    stmt.close();
+                }
+                if (connection != null) {
+                    connection.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return lista;
+    }
+
+    @Override
+    public int getNoOfRecords() {
+        return noOfRecords;
+    }
+
+    @Override
+    public List<Produse> findAllProduse(int offset, int noOfRecords) {
+          Connection connection = null;
+        Statement stmt = null;
+
+        String query = "select SQL_CALC_FOUND_ROWS * from produse  ORDER BY id DESC limit " + offset + ", " + noOfRecords;
+
+        System.out.println(
+                "EmployeeDAO.viewAllEmployees()" + query);
+        List<Produse> lista = new ArrayList<Produse>();
+        Produse produs = null;
+
+        try {
+            connection = myDataSource.getConnection();
+            stmt = connection.createStatement();
+            ResultSet rs = stmt.executeQuery(query);
+            while (rs.next()) {
+
+                produs = new Produse(rs.getInt(1), rs.getString(2), rs.getInt(4));
+                lista.add(produs);
+            }
+            rs.close();
+            rs = stmt.executeQuery("SELECT FOUND_ROWS()");
+            if (rs.next()) {
+                this.noOfRecords = rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (stmt != null) {
+                    stmt.close();
+                }
+                if (connection != null) {
+                    connection.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return lista;
+    }
+
+    
+
+    @Override
+    public int nrRinduriInBD() {
+        int numberOfRows = 0;
+        String sql = "SELECT count(*) from produse";
+
+        try (
+                Connection conn = myDataSource.getConnection();
+                PreparedStatement ps = conn.prepareStatement(sql);
+                ResultSet rs = ps.executeQuery();) {
+            if (rs.next()) {
+                numberOfRows = rs.getInt(1);
+
+            }
+
+        } catch (SQLException ex) {
+            Logger.getLogger(ProduseDaoImpl.class
+                    .getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return numberOfRows;
+    }
+
+    @Override
+    public List<Produse> findAllByUser(UserBean user) {
+        String sql = "SELECT * FROM produse WHERE idUser=?  ORDER BY id DESC";
+        List<Produse> lista = new ArrayList<Produse>();
+        try {
+            try (
+                    Connection conn = myDataSource.getConnection();
+                    PreparedStatement ps = conn.prepareStatement(sql);) {
+                ps.setInt(1, user.getId());
+                try (ResultSet rs = ps.executeQuery();) {
+                    while (rs.next()) {
+                        Produse p = new Produse(rs.getInt(1), rs.getString(2));
+
+                        lista.add(p);
+
+                    }
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(ProduseDaoImpl.class
+                    .getName()).log(Level.SEVERE, null, ex);
+        }
+        return lista;
+    }
+
+    @Override
+    public boolean checkUserProduct(int id, ArrayList<Produse> listaproduse) {
+        for (Produse produs : listaproduse) {
+            if (produs.getId() == id) {
+
+                return true;
+            }
+
+        }
+        return false;
+
+    }
+
+    @Override
+    public List<Produse> findAllProductsByDenumire(String textCont,int offset, int noOfRecords) {
+        String sql = "SELECT * FROM produse WHERE denumire  LIKE CONCAT ('%" + textCont + "%')";
+         Connection connection = null;
+        Statement stmt = null;
+
+        String query = "select SQL_CALC_FOUND_ROWS * from produse WHERE denumire  LIKE CONCAT ('%" + textCont + "%') limit " + offset + ", " + noOfRecords;
+
+        System.out.println(
+                "EmployeeDAO.viewAllEmployees()" + query);
+     
+        List<Produse> lista = new ArrayList<Produse>();
+        Produse produs = null;
+
+        try {
+            connection = myDataSource.getConnection();
+            stmt = connection.createStatement();
+            ResultSet rs = stmt.executeQuery(query);
+            while (rs.next()) {
+
+                produs = new Produse(rs.getInt(1), rs.getString(2), rs.getInt(4));
+                lista.add(produs);
+            }
+            rs.close();
+            rs = stmt.executeQuery("SELECT FOUND_ROWS()");
+            if (rs.next()) {
+                this.noOfRecords = rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (stmt != null) {
+                    stmt.close();
+                }
+                if (connection != null) {
+                    connection.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return lista;
+
+    }
+
+}

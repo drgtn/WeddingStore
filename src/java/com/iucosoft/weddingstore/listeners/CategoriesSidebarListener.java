@@ -1,0 +1,34 @@
+package com.iucosoft.weddingstore.listeners;
+
+import com.iucosoft.weddingstore.dao.CategoriiDaoIntf;
+import com.iucosoft.weddingstore.db.MyDataSource;
+import com.iucosoft.weddingstore.domain.Categorii;
+import com.iucosoft.weddingstore.dao.impl.CategoriiDaoImpl;
+import java.util.List;
+import javax.servlet.ServletRequestEvent;
+import javax.servlet.ServletRequestListener;
+
+public class CategoriesSidebarListener implements  ServletRequestListener {
+
+    @Override
+    public void requestDestroyed(ServletRequestEvent sre) {
+       MyDataSource myDataSource = (MyDataSource) sre.getServletContext().getAttribute("myDataSource");
+
+        CategoriiDaoIntf cat = CategoriiDaoImpl.getInstance(myDataSource);
+
+        List<Categorii> listaCategorii = cat.findAllCategorii();
+        sre.getServletContext().setAttribute("listaCategorii", listaCategorii);
+    }
+
+    @Override
+    public void requestInitialized(ServletRequestEvent sre) {
+         MyDataSource myDataSource = (MyDataSource) sre.getServletContext().getAttribute("myDataSource");
+
+        CategoriiDaoIntf cat = CategoriiDaoImpl.getInstance(myDataSource);
+
+        List<Categorii> listaCategorii = cat.findAllCategorii();
+        sre.getServletContext().setAttribute("listaCategorii", listaCategorii);
+    }
+
+
+}

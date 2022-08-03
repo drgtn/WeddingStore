@@ -1,0 +1,41 @@
+<%@page import="com.iucosoft.weddingstore.domain.Produse"%>
+<%@taglib prefix="c"  uri="http://java.sun.com/jsp/jstl/core" %>
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <link href="${pageContext.request.contextPath}/css/styles.css"  rel="stylesheet" type="text/css"/>
+        <title><c:out value="${produs.denumire}" /> </title>
+    </head>
+    <body>
+     <jsp:include page="../commons/userheader.jsp" />
+        <div class="wrapper">
+
+              <jsp:include page="../commons/usersidebar.jsp" />
+            <div class="content">
+                <div class="categoriesTitle">  </div>
+                <div class="photoProductGalery"></div>
+                <div class="productInfo">
+                    <p class="selfProductDenumire"><c:out value="${produs.denumire}" /></p>
+                   
+                  
+                   
+                    <p class="selfProductPrice">Price :<span class="productPrice">&nbsp<c:out value="${produs. pret}" />&nbsplei</span></p>
+                    <p class="wishButtonProduct"><input class="wishButton" type="submit" value="Watch later"></p>
+                </div>
+                <div class="clear"></div>
+                <div class="productDescription">
+                    <p class="selftProductDescription">Description</p>
+                    <p class="productText">&nbsp<c:out value="${produs. descriere}" /></p>
+                </div>
+                <div class="contacts">
+                    <p class="regiunea">regiunea: <span class="nr">&nbsp<c:out value="${produs. regiunea}" /></span><p>
+                    <p class="contacte">contacte: <span class="nr">&nbsp<c:out value="${produs. telefon}" /></span><p>
+                </div>
+            </div>
+            <div class="clear"></div>
+           <jsp:include page="../commons/footer.jsp" />
+        </div>
+    </body>
+</html>

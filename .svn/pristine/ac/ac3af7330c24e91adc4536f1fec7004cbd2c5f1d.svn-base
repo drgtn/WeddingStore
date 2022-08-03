@@ -1,0 +1,88 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package com.iucosoft.weddingstore.user;
+
+import com.iucosoft.weddingstore.dao.ProduseDaoIntf;
+import com.iucosoft.weddingstore.db.MyDataSource;
+import com.iucosoft.weddingstore.domain.Produse;
+import com.iucosoft.weddingstrore.dao.impl.ProduseDaoImpl;
+import java.io.IOException;
+import java.io.PrintWriter;
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+/**
+ *
+ * @author Andrei
+ */
+public class updateproduct extends HttpServlet {
+
+    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+    }
+
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+         request.setAttribute("anuntadaugat", "");
+        processRequest(request, response);
+        
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        RequestDispatcher rd = null;
+
+        MyDataSource myDataSource = (MyDataSource) request.getServletContext().getAttribute("myDataSource");
+        ProduseDaoIntf produsDao = ProduseDaoImpl.getInstance(myDataSource);
+
+        String denumire = request.getParameter("denumire");
+        String descriere = request.getParameter("descriere");
+        String pretStr = request.getParameter("pret");
+        String regiunea = request.getParameter("regiunea");
+        String telefonStr = request.getParameter("telefon");
+
+        int pret = Integer.parseInt(pretStr);
+        int telefon=Integer.parseInt(telefonStr);
+
+        String idProductStr = request.getParameter("id");
+        int idProduct = Integer.parseInt(idProductStr);
+        try {
+
+            Produse produs = produsDao.findOneProdusById(idProduct);
+
+            if (produs != null) {
+                produs.setDenumire(denumire);
+                produs.setDescriere(descriere);
+                produs.setPret(pret);
+                 produs.setRegiunea(regiunea);
+                 produs.setTelefon(telefon);
+
+                produsDao.updateProdus(produs);
+                request.setAttribute("anuntupdatat", "Your post has been updated successfully !");
+           
+             rd = request.getRequestDispatcher("/WEB-INF/pages/user/showupdateproduct.jsp");
+                rd.forward(request, response);
+            }
+
+        } catch (Exception nfe) {
+
+            request.setAttribute("error", "Nu a fost indicat corect ID-ul " + nfe.getMessage());
+            request.getRequestDispatcher("/error.jsp").forward(request, response);
+        }
+    }
+
+    @Override
+    public String getServletInfo() {
+        return "Short description";
+    }// </editor-fold>
+
+}

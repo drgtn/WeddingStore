@@ -1,0 +1,141 @@
+-- MySQL dump 10.13  Distrib 5.6.17, for Win64 (x86_64)
+--
+-- Host: 127.0.0.1    Database: weddingdb
+-- ------------------------------------------------------
+-- Server version	5.6.21-log
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+--
+-- Table structure for table `categorii`
+--
+
+DROP TABLE IF EXISTS `categorii`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `categorii` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `denumire` varchar(45) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `categorii`
+--
+
+LOCK TABLES `categorii` WRITE;
+/*!40000 ALTER TABLE `categorii` DISABLE KEYS */;
+INSERT INTO `categorii` VALUES (1,'Wedding dresses'),(2,'Wedding shoes'),(3,'Wedding flowers'),(4,'Wedding rings'),(5,'Wedding cakes'),(6,'Wedding wines'),(7,'Wedding food'),(8,'Beers');
+/*!40000 ALTER TABLE `categorii` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `imaginiprodus`
+--
+
+DROP TABLE IF EXISTS `imaginiprodus`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `imaginiprodus` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `numedir` varchar(45) DEFAULT NULL,
+  `numefile` varchar(45) DEFAULT NULL,
+  `idProdus` int(11) NOT NULL,
+  `imagedata` mediumblob,
+  PRIMARY KEY (`id`),
+  KEY `fk_imaginiprodus_idx` (`idProdus`),
+  CONSTRAINT `imaginiprodus` FOREIGN KEY (`idProdus`) REFERENCES `produse` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `imaginiprodus`
+--
+
+LOCK TABLES `imaginiprodus` WRITE;
+/*!40000 ALTER TABLE `imaginiprodus` DISABLE KEYS */;
+/*!40000 ALTER TABLE `imaginiprodus` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `produse`
+--
+
+DROP TABLE IF EXISTS `produse`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `produse` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `denumire` tinytext NOT NULL,
+  `descriere` mediumtext NOT NULL,
+  `pret` int(6) NOT NULL,
+  `telefon` int(11) NOT NULL,
+  `regiunea` varchar(45) NOT NULL,
+  `idCat` int(11) NOT NULL,
+  `idUser` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `categorii_idx` (`idCat`),
+  KEY `users_idx` (`idUser`),
+  CONSTRAINT `categorii` FOREIGN KEY (`idCat`) REFERENCES `categorii` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `users` FOREIGN KEY (`idUser`) REFERENCES `users` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB AUTO_INCREMENT=44 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `produse`
+--
+
+LOCK TABLES `produse` WRITE;
+/*!40000 ALTER TABLE `produse` DISABLE KEYS */;
+INSERT INTO `produse` VALUES (4,'chilorei de vara','Acesa ese un text frumos',3000,68065614,'chisinau',2,2),(5,'Galgovi','dedjwnfwlnfwlenfwln',90,6878787,'bardar',1,2),(10,'dqwdwq','dqwdqwd',1111,3234,'dqwwd',1,2),(12,'Pantaloni','Pantaloni de lina de iarna',5000,68065614,'postaveche',4,3),(14,'shoes de piele','shoes de pieleshoes de pieleshoes de pieleshoes de pieleshoes de pieleshoes de pieleshoes de piele',500,68065614,'shoes',2,2),(30,'dewdew','dewdew',343,44444,'dewdew',1,1),(31,'cwe','cwecwe',111,1111,'cd',1,1),(32,'dwed','dwedew',111,111,'dewdew',1,1),(33,'dewedw','dwedew',111,111,'dewdew',1,1),(34,'dwedwe','dwedwedw',12324,12312,'dewdewdwed',1,1),(37,'Acesta este un titlu super tare ai stiut ?','Acesta este un titlu super tare ai stiut ? \r\nAcesta este un titlu super tare ai stiut ?Acesta este un titlu super tare ai stiut ?Acesta este un titlu super tare ai stiut ?',1345,12434,'ialoveniCity',3,1),(38,'dewdew','dwedwe',111,121,'dedew',1,1),(39,'ssssss','sssssssss',111,111,'ssss',3,1),(42,'Anunt test','test 1dwqdwefwe',1300,68065614,'chisinau',1,1),(43,'Acesta este un text super mare si frumos daaa','Acesta este un text super mare si frumos daaaAcesta este un text super mare si frumos daaaAcesta este un text super mare si frumos daaa',1344,68065614,'ialoveni',1,1);
+/*!40000 ALTER TABLE `produse` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `users`
+--
+
+DROP TABLE IF EXISTS `users`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `users` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `email` varchar(100) NOT NULL,
+  `password` varchar(45) NOT NULL,
+  `firstName` varchar(45) NOT NULL,
+  `lastName` varchar(45) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `index` (`email`)
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `users`
+--
+
+LOCK TABLES `users` WRITE;
+/*!40000 ALTER TABLE `users` DISABLE KEYS */;
+INSERT INTO `users` VALUES (1,'drgtn.a@gmail.com','183d334b5a585f616e85d3be3e8c1c37','Andrei','Dragutan'),(2,'boldurat.vanea@gmail.com','183d334b5a585f616e85d3be3e8c1c37','Vanea','Boldirat'),(3,'buhai.ion@yahoo.com','709fe72b18753cae67a90e1267364348','Ion','Buhai'),(4,'vasea.brigadiriu@yahoo.com','183d334b5a585f616e85d3be3e8c1c37','vasea ','brigadiriu'),(5,'ssss@yahoo.com','183d334b5a585f616e85d3be3e8c1c37','sssssssssss','ssssssss'),(6,'ddd@yahoo.com','183d334b5a585f616e85d3be3e8c1c37','ddd','ddd'),(7,'dddd@yahoo.com','183d334b5a585f616e85d3be3e8c1c37','ddd','ddd'),(8,'ddddd@yahoo.com','183d334b5a585f616e85d3be3e8c1c37','ddd','ddd'),(9,'dddddd@yahoo.com','183d334b5a585f616e85d3be3e8c1c37','ddd','ddd'),(10,'ddddddd@yahoo.com','183d334b5a585f616e85d3be3e8c1c37','ddd','ddd'),(11,'swqswq@yahoo.com','96e79218965eb72c92a549dd5a330112','sqws','sqwswq'),(12,'aaaaaa@yahoo.com','183d334b5a585f616e85d3be3e8c1c37','aaaa','aaaa');
+/*!40000 ALTER TABLE `users` ENABLE KEYS */;
+UNLOCK TABLES;
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+
+-- Dump completed on 2015-04-27 12:23:58

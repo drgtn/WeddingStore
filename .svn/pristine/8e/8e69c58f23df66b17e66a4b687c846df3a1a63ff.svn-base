@@ -1,0 +1,40 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package com.iucosoft.weddingstore.dao;
+
+import com.iucosoft.weddingstore.domain.Produse;
+import com.iucosoft.weddingstore.domain.UserBean;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ *
+ * @author Andrei
+ */
+public interface ProduseDaoIntf {
+
+    List<Produse> findAllByUser(UserBean user);
+
+    boolean checkUserProduct(int id, ArrayList<Produse> listaproduse);
+
+    void saveProdus(Produse produs, UserBean userBean);
+
+    void updateProdus(Produse produs);
+
+    void deleteProdus(Produse produs) throws SQLException;
+
+    Produse findOneProdusById(int id);
+
+    List<Produse> findAllByCategorieId(int idCat,int offset,int noOfRecords);
+
+    List<Produse> findAllProduse(int offset, int noOfRecords);
+
+    int nrRinduriInBD();
+
+    List<Produse> findAllProductsByDenumire(String textCont,int offset, int noOfRecords);
+    int getNoOfRecords();
+}

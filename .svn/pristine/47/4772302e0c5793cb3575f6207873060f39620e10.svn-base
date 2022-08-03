@@ -1,0 +1,99 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package com.iucosoft.weddingstore.user;
+
+import com.iucosoft.weddingstore.dao.ProduseDaoIntf;
+import com.iucosoft.weddingstore.db.MyDataSource;
+import com.iucosoft.weddingstore.domain.Produse;
+import com.iucosoft.weddingstore.domain.UserBean;
+import com.iucosoft.weddingstrore.dao.impl.ProduseDaoImpl;
+import java.io.IOException;
+import java.io.PrintWriter;
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+/**
+ *
+ * @author Andrei
+ */
+public class addproduct extends HttpServlet {
+
+    /**
+     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
+     * methods.
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
+    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+    }
+
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+         processRequest(request, response);
+          request.setAttribute("anuntadaugat", "");
+
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        MyDataSource myDataSource = (MyDataSource) request.getServletContext().getAttribute("myDataSource");
+        ProduseDaoIntf produsDao = ProduseDaoImpl.getInstance(myDataSource);
+        RequestDispatcher rd = null;
+
+        try {
+            String idCatStr = request.getParameter("idCat");
+            String regiunea = request.getParameter("regiunea");
+            String denumire = request.getParameter("denumire");
+            String descriere = request.getParameter("descriere");
+
+            String pretStr = request.getParameter("pret");
+
+            String telefonStr = request.getParameter("telefon");
+
+            int idCat = Integer.parseInt(idCatStr);
+            int telefon = Integer.parseInt(telefonStr);
+
+            int pret = Integer.parseInt(pretStr);
+            
+            
+
+            UserBean user = (UserBean) request.getSession().getAttribute("user");
+
+            Produse produs = new Produse(denumire, descriere, pret, telefon, regiunea, idCat);
+            produsDao.saveProdus(produs, user);
+            
+            request.setAttribute("anuntadaugat", "Your post has been added successfully !");
+           
+             rd = request.getRequestDispatcher("/WEB-INF/pages/user/showaddproduct.jsp");
+
+         
+
+        } catch (Exception nfe) {
+
+            request.setAttribute("error", "Nu a fost indicat corect ID-ul " + nfe.getMessage());
+            rd = request.getRequestDispatcher("/error.jsp");
+        }
+
+        rd.forward(request, response);
+    }
+
+    @Override
+    public String getServletInfo() {
+        return "Short description";
+    }// </editor-fold>
+
+}

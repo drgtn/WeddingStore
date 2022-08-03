@@ -1,0 +1,98 @@
+package com.iucosoft.weddingstore.frontend;
+
+import com.iucosoft.weddingstore.dao.ProduseDaoIntf;
+import com.iucosoft.weddingstore.dao.UserBeanDaoIntf;
+import com.iucosoft.weddingstore.db.MyDataSource;
+import com.iucosoft.weddingstore.domain.Produse;
+import com.iucosoft.weddingstore.domain.UserBean;
+import com.iucosoft.weddingstore.util.MD5Util;
+import com.iucosoft.weddingstrore.dao.impl.ProduseDaoImpl;
+import com.iucosoft.weddingstrore.dao.impl.UserBeanDaoImpl;
+import java.io.IOException;
+import java.util.List;
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+public class login extends HttpServlet {
+
+    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+    }
+
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        int page = 1;
+        int recordsPerPage = 8;
+        if (request.getParameter("page") != null) {
+            page = Integer.parseInt(request.getParameter("page"));
+        }
+        String email = request.getParameter("email");
+        
+        MyDataSource myDataSource = (MyDataSource) request.getServletContext().getAttribute("myDataSource");
+        RequestDispatcher rd = null;
+
+        UserBeanDaoIntf userDao = UserBeanDaoImpl.getInstance(myDataSource);
+        ProduseDaoIntf produseDao = ProduseDaoImpl.getInstance(myDataSource);
+
+        //produse
+        List<Produse> listProduse;
+        listProduse = produseDao.findAllProduse((page - 1) * recordsPerPage, recordsPerPage);
+
+        //user
+        UserBean user = new UserBean();
+
+        
+        String password = MD5Util.getHash(request.getParameter("password"));
+
+        user.setEmail(email);
+        user.setPassword(password);
+        user = userDao.login(user);
+        request.setAttribute("email", email);        //pentru a memora email-ul cind dam back
+        request.setAttribute("password", "");
+
+        try {
+
+            if (user.isValid()) {
+                HttpSession session = request.getSession(true);
+                session.setAttribute("user", user);
+
+                int noOfRecords = produseDao.getNoOfRecords();
+                int noOfPages = (int) Math.ceil(noOfRecords * 1.0 / recordsPerPage);
+                request.setAttribute("listProduse", listProduse);
+                request.setAttribute("noOfPages", noOfPages);
+                request.setAttribute("currentPage", page);
+                rd = request.getRequestDispatcher("/WEB-INF/pages/user/main.jsp");
+
+                rd.forward(request, response);
+
+            } else {
+
+                request.setAttribute("validationmessage", "* wrong email or password!");
+                rd = request.getRequestDispatcher("/WEB-INF/pages/login.jsp");
+                rd.forward(request, response);
+
+            }
+        } catch (Throwable theException) {
+            System.out.println(theException);
+        }
+
+    }
+
+    @Override
+    public String getServletInfo() {
+        return "Short description";
+    }// </editor-fold>
+
+}
